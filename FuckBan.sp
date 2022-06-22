@@ -19,6 +19,9 @@ bool
 
 Handle ghTimer[MAXPLAYERS+1];
 
+int iBanTime, iModel;
+float fBeforeBan;
+
 char czCockMsg[][] = {
 	"Ко-Ко-Ко",
 	"Я петушара"
@@ -26,13 +29,50 @@ char czCockMsg[][] = {
 
 char czDefaultModelPlayer[MAXPLAYERS+1][PLATFORM_MAX_PATH];
 
+
+public Plugin myinfo = {
+	name = "FuckBan", 
+	author = "Quake1011", 
+	description = "For fun", 
+	version = "1.4", 
+	url = "https://github.com/Quake1011" 
+}
+
 public void OnPluginStart()
 {
+	ConVar hCvar;
+	
     HookEvent("player_hurt", Event_PlayerHurt);
 	AddCommandListener(SayCB,"say");
 	AddCommandListener(SayCB,"say_team");
 
     RegAdminCmd("helloban", CMD_FuckBan, ADMFLAG_ROOT);
+
+	HookConVarChange((hCvar = CreateConVar("fb_BanTime", "1.0", "Time of ban timer(minutes)", FCVAR_NOTIFY,true,0.0)), OnConvarChangedBT);
+	iBanTime = hCvar.IntValue;
+
+	HookConVarChange((hCvar = CreateConVar("fb_BeforeBanTime", "1.0", "Waiting N - count minutes before ban", FCVAR_NOTIFY,true,0.0)), OnConvarChangedPBT);
+	fBeforeBan = hCvar.FloatValue;
+
+	HookConVarChange((hCvar = CreateConVar("fb_Select_mdl", "1.0", "Select skin model(in dev)", FCVAR_NOTIFY,true,0.0,true, 3.0)), OnConvarChangedSM);
+	iModel = hCvar.IntValue;
+
+	AutoExecConfig(true, "fuckban");
+}
+
+public void OnConvarChangedBT(ConVar hCvar, const char[] oldValue, const char[] newValue)
+{
+	iBanTime = hCvar.IntValue;
+}
+
+public void OnConvarChangedPBT(ConVar hCvar, const char[] oldValue, const char[] newValue)
+{
+	fBeforeBan = hCvar.FloatValue;
+}
+
+public void OnConvarChangedSM(ConVar hCvar, const char[] oldValue, const char[] newValue)
+{
+	iModel = hCvar.IntValue;	// symbol is assigned a value that is never used: "iModel"
 }
 
 public void OnClientDisconnectPre(client)
@@ -239,7 +279,7 @@ public void OnPlayerRunCmdPost(int client, int buttons, int impulse, const float
 	if(bMtlDmg[client] && buttons & IN_ATTACK)
 	{
 		int iclH = GetEntProp(client, Prop_Send, "m_iHealth");
-		if(iclH!=0) SetEntProp(client, Prop_Send, "m_iHealth", iclH-1);
+		if(iclH != 0) SetEntProp(client, Prop_Send, "m_iHealth", iclH - 1);
 		else ForcePlayerSuicide(client);
 	}
 }
@@ -281,7 +321,7 @@ bool BanTimer(client)
 	else 
 	{	
 		bBanTimer[client] = true;
-		ghTimer[client] = CreateTimer(2.0, BanTimerCallBack, client);
+		ghTimer[client] = CreateTimer(fBeforeBan, BanTimerCallBack, client);
 	}
 }
 
@@ -289,7 +329,7 @@ public Action BanTimerCallBack(Handle hTimer, client)
 {
 	if(ghTimer[client] != INVALID_HANDLE)
 	{
-		MABanPlayer(0, client, MA_BAN_STEAM, 1, "?Cheater?")
+		MABanPlayer(0, client, MA_BAN_STEAM, iBanTime, "?Cheater?")
 		KillTimer(ghTimer[client]);
 		ghTimer[client] = null;
 	}
