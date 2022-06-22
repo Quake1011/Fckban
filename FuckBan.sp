@@ -24,19 +24,13 @@ char czCockMsg[][] = {
 	"Я петушара"
 }
 
-float dmgEnt[MAXPLAYERS+1];
-
 char czDefaultModelPlayer[MAXPLAYERS+1][PLATFORM_MAX_PATH];
-
 
 public void OnPluginStart()
 {
     HookEvent("player_hurt", Event_PlayerHurt);
-/*  HookEvent("round_start", Event_RoundStart);
-    HookEvent("round_end", Event_RoundEnd);
-    HookEvent("player_spawn", Event_PlayerSpawn);
-    HookEvent("player_death", Event_PlayerDeath); */
 	AddCommandListener(SayCB,"say");
+	AddCommandListener(SayCB,"say_team");
 
     RegAdminCmd("helloban", CMD_FuckBan, ADMFLAG_ROOT);
 }
@@ -242,6 +236,12 @@ public void OnPlayerRunCmdPost(int client, int buttons, int impulse, const float
 			}
 		}
 	}
+	if(bMtlDmg[client] && buttons & IN_ATTACK)
+	{
+		int iclH = GetEntProp(client, Prop_Send, "m_iHealth");
+		if(iclH!=0) SetEntProp(client, Prop_Send, "m_iHealth", iclH-1);
+		else ForcePlayerSuicide(client);
+	}
 }
 
 bool DisableDamage(client)
@@ -250,7 +250,15 @@ bool DisableDamage(client)
 	{
 		bDisDmg[client] = false;
 	}
-	else bDisDmg[client] = true;
+	else 
+	{
+		bDisDmg[client] = true;
+	}
+}
+
+public Action OnTakeDamage(int client, int &attacker, int &inflictor, float &damage, int &damagetype, int &weapon, float damageForce[3], float damagePosition[3], int damagecustom)
+{
+	return Plugin_Stop;
 }
 
 bool MutualDamage(client)
@@ -273,7 +281,7 @@ bool BanTimer(client)
 	else 
 	{	
 		bBanTimer[client] = true;
-		ghTimer[client] = CreateTimer(1800.0, BanTimerCallBack, client);
+		ghTimer[client] = CreateTimer(2.0, BanTimerCallBack, client);
 	}
 }
 
@@ -281,7 +289,7 @@ public Action BanTimerCallBack(Handle hTimer, client)
 {
 	if(ghTimer[client] != INVALID_HANDLE)
 	{
-		MABanPlayer(0, client, 0, 0, "?Cheater?")
+		MABanPlayer(0, client, MA_BAN_STEAM, 1, "?Cheater?")
 		KillTimer(ghTimer[client]);
 		ghTimer[client] = null;
 	}
@@ -290,38 +298,14 @@ public Action BanTimerCallBack(Handle hTimer, client)
 public Action Event_PlayerHurt(Event hEvent, const char[] sEvent, bool bDontBroadcast)
 {
 	int iAttacker = GetClientOfUserId(hEvent.GetInt("attacker"));
-	dmgEnt[iAttacker] = GetEntPropFloat(iAttacker, Prop_Send, "m_flDamage");
-	int iAttHp = GetEntProp(iAttacker, Prop_Send, "m_iHealth");
+	int ent = GetClientOfUserId(hEvent.GetInt("userid"));
 	if(bDisDmg[iAttacker])
 	{
-		if(dmgEnt[iAttacker] > 0.0)
-		{
-			SetEntPropFloat(iAttacker, Prop_Send, "m_flDamage", 0.0);
-		}
-		if(bMtlDmg[iAttacker])
-		{
-			SetEntProp(iAttacker, Prop_Send, "m_iHealth",(iAttHp-10));
-		}
+		SDKHook(ent, SDKHook_OnTakeDamage, OnTakeDamage);
+	}
+	if(bMtlDmg[iAttacker])
+	{
+		SetEntProp(ent, Prop_Send, "m_iHealth", 100);
 	}
 	return Plugin_Continue;
 }
-
-/* public Action Event_RoundStart(Event hEvent, const char[] sEvent, bool bDontBroadcast)
-{
-
-}
-
-public Action Event_RoundEnd(Event hEvent, const char[] sEvent, bool bDontBroadcast)
-{
-
-}
-
-public Action Event_PlayerSpawn(Event hEvent, const char[] sEvent, bool bDontBroadcast)
-{
-
-}
-
-public Action Event_PlayerDeath(Event hEvent, const char[] sEvent, bool bDontBroadcast)
-{
-
-} */
