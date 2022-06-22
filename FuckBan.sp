@@ -6,6 +6,8 @@
 
 #pragma tabsize 4
 
+int iTmpViol;
+
 bool 
 	bWeapDick[MAXPLAYERS+1],
 	bDickMdl[MAXPLAYERS+1],
@@ -26,58 +28,11 @@ float dmgEnt[MAXPLAYERS+1];
 
 char czDefaultModelPlayer[MAXPLAYERS+1][PLATFORM_MAX_PATH];
 
-Menu hMenu;
-
-char czDownloadPaths[][] = {
-    "materials/models/player/kaesar/chickenleet/wings.vmt",
-    "materials/models/player/kaesar/chickenleet/t_leet_glass.vmt",
-    "materials/models/player/kaesar/chickenleet/t_leet.vmt",
-    "materials/models/player/kaesar/chickenleet/body.vmt",
-    "models/player/custom_player/kaesar/chickenleet/chickenleet.mdl",
-    "models/player/custom_player/kaesar/chickenleet/chickenleet.dx90.vtx",
-    "models/player/custom_player/kaesar/chickenleet/chickenleet.vvd",
-    "models/player/custom_player/kaesar/chickenleet/chickenleet.phy",
-    "materials/models/player/kaesar/chickenleet/wings_n.vtf",
-    "materials/models/player/kaesar/chickenleet/t_leet_normal.vtf",
-    "materials/models/player/kaesar/chickenleet/t_leet_glass.vtf",
-    "materials/models/player/kaesar/chickenleet/t_leet.vtf",
-    "materials/models/player/kaesar/chickenleet/wings.vtf",
-    "materials/models/player/kaesar/chickenleet/body_n.vtf",
-    "materials/models/player/kaesar/chickenleet/body.vtf",
-	"models/weapons/w_knife_default_ct_dropped.mdl",
-	"models/weapons/w_knife_default_ct_dropped.dx90.vtx",
-	"models/weapons/w_knife_default_ct_dropped.vvd",
-	"models/weapons/w_knife_default_ct_dropped.phy",
-	"models/weapons/w_knife_default_ct.mdl",
-	"models/weapons/w_knife_default_ct.dx90.vtx",
-	"models/weapons/w_knife_default_ct.vvd",
-	"models/weapons/w_knife_default_t_dropped.mdl",
-	"models/weapons/w_knife_default_t_dropped.dx90.vtx",
-	"models/weapons/w_knife_default_t_dropped.vvd",
-	"models/weapons/w_knife_default_t_dropped.phy",
-	"models/weapons/w_knife_default_t.mdl",
-	"models/weapons/w_knife_default_t.dx90.vtx",
-	"models/weapons/w_knife_default_t.vvd",
-	"models/weapons/w_knife_default_t.phy",
-	"models/weapons/v_knife_default_ct.mdl",
-	"models/weapons/v_knife_default_t.mdl",
-	"models/weapons/v_knife_default_ct.dx90.vtx",
-	"models/weapons/v_knife_default_t.dx90.vtx",
-	"models/weapons/v_knife_default_ct.vvd",
-	"models/weapons/v_knife_default_t.vvd",
-	"materials/models/mikeymack/horsecock/horsecock_d4.vmt",
-	"materials/models/mikeymack/horsecock/horsecock_d4.vtf",
-	"materials/models/mikeymack/horsecock/horsecock_n.vtf",
-	"materials/models/mikeymack/horsecock/phong.vtf",
-	"materials/models/mikeymack/horsecock/detail_skin.vtf",
-	"materials/models/mikeymack/horsecock/lightwarp.vtf",
-	"sound/FuckBan/CockSndDir/cockChat.mp3"
-}
 
 public void OnPluginStart()
 {
     HookEvent("player_hurt", Event_PlayerHurt);
-/*     HookEvent("round_start", Event_RoundStart);
+/*  HookEvent("round_start", Event_RoundStart);
     HookEvent("round_end", Event_RoundEnd);
     HookEvent("player_spawn", Event_PlayerSpawn);
     HookEvent("player_death", Event_PlayerDeath); */
@@ -96,87 +51,124 @@ public void OnClientDisconnectPre(client)
 
 public void OnMapStart()
 {
-    for(int i = 0;i<=sizeof(czDownloadPaths);i++)
+	PrecacheSound("*/FuckBan/CockSndDir/cockChat.mp3")
+}
+
+public Action CMD_FuckBan(int client, int args)
+{
+    Menu hMenu = CreateMenu(MenuCallBack);
+    hMenu.SetTitle("Выбор игрока");
+    for(int i = 1; i <= MaxClients; i++)
     {
-        if(StrContains(czDownloadPaths[i],".mdl"))
-        {
-            PrecacheModel(czDownloadPaths[i], true);
+        if(IsClientInGame(i))
+        {       
+            char str[16], buffer[64];
+            int index = i;
+            IntToString(index, str, sizeof(str));
+            FormatEx(buffer, sizeof(buffer), "(%i) %N", index, index)
+            hMenu.AddItem(str, buffer)
         }
-        else if(StrContains(czDownloadPaths[i],".mp3") || StrContains(czDownloadPaths[i],".wav"))
+    }
+    hMenu.Display(client, 0);
+    hMenu.ExitBackButton = true;
+    hMenu.ExitButton = true;
+}
+
+public int MenuCallBack(Menu hMenu, MenuAction action, int iClient, int iItem)
+{
+    char buffer[64];
+    switch(action)
+    {
+        case MenuAction_End:
         {
-            char buff[PLATFORM_MAX_PATH];
-            ReplaceStringEx(czDownloadPaths[i], sizeof(buff), "sound/", "*/");
-            PrecacheSound(czDownloadPaths[i], true);
+            delete hMenu;
+        }
+        case MenuAction_Select:
+        {
+            hMenu.GetItem(iItem, buffer, sizeof(buffer))
+            iTmpViol = StringToInt(buffer);
+            Menu hMenu2 = CreateMenu(MenuCallBack2);
+            hMenu2.SetTitle("Выбор наказания");
+            hMenu2.AddItem("item1","Weapon Dick Action");
+            hMenu2.AddItem("item2","Dick Model");
+            hMenu2.AddItem("item3","Cock Chat");
+            hMenu2.AddItem("item4","Cock Sound");
+            hMenu2.AddItem("item5","Disable Damage");
+            hMenu2.AddItem("item6","Mutual Damage");
+            hMenu2.AddItem("item7","Ban Timer");
+            hMenu2.Display(iClient, 0);
+            hMenu2.ExitBackButton = true;
+            hMenu2.ExitButton = true;
         }
     }
 }
 
-public Action CMD_FuckBan(client, int args)
+public int MenuCallBack2(Menu hMenu, MenuAction action, int iClient, int iItem)
 {
-	OnCreateMainMenu(client, true);
-}
-
-public void OnCreateMainMenu(client, bool withTargets)
-{
-    hMenu = new Menu(mMenu_Handler);
-	if(withTargets) AddTargetsToMenu(hMenu,0,true);
-	
-	else
-	{
-		hMenu.AddItem("item1","WeaponDick");
-		hMenu.AddItem("item2","DickModel");
-		hMenu.AddItem("item3","CockChat");
-		hMenu.AddItem("item4","CockSound");
-		hMenu.AddItem("item5","DisableDamage");
-		hMenu.AddItem("item6","MutualDamage");
-		hMenu.AddItem("item7","BanTimer");
-	}
-    hMenu.ExitBackButton = true;
-    hMenu.ExitButton = true;
-    hMenu.Display(client, 0);
-}
-
-public int mMenu_Handler(Menu menu, MenuAction action, client, int item)
-{
-	int target;
-	if(action == MenuAction_End)
-	{
-		CloseHandle(menu);
-		return;
-	}
-
-	if(action == MenuAction_Select)
-	{
-		char userid[16];
-		GetMenuItem(menu, item, userid, sizeof(userid));
-		target = GetClientOfUserId(StringToInt(userid))
-		OnCreateMainMenu(client, false);
-		switch(item)
-		{
-			case 1: WeaponDickAction(target);
-			case 2: DickModel(target);
-			case 3: CockChat(target);
-			case 4: CockSound(target);
-			case 5: DisableDamage(target);
-			case 6: MutualDamage(target);
-			case 7: BanTimer(target);
-		}
-	}
+    char buffer[64];
+    int target = iTmpViol
+    switch(action)
+    {
+        case MenuAction_End:
+        {
+            delete hMenu;
+            iTmpViol = 0;
+        }
+        case MenuAction_Select:
+        {
+            hMenu.GetItem(iItem, buffer, sizeof(buffer))
+            switch(iItem)
+            {
+                case 0:
+                {
+                    WeaponDickAction(target);
+                }
+                case 1:
+                {
+                    DickModel(target);
+                }
+                case 2:
+                {
+                    CockChat(target);
+                }
+                case 3:
+                {
+                    CockSound(target);
+                }
+                case 4:
+                {
+                    DisableDamage(target);
+                }
+                case 5:
+                {
+                    MutualDamage(target);
+                }
+                case 6:
+                {
+                    BanTimer(target);
+                }
+            }
+        }
+    }
 }
 
 public Action SayCB(int client, const char[] command, int argc)
 {
 	if(bCockCh[client])
 	{
-		char cockchBuff[256];
-		FormatEx(cockchBuff, sizeof(cockchBuff), "%s", czCockMsg[GetRandomInt(0,1)])
-		PrintToChatAll(cockchBuff);
+		char cockchBuff[256], buffer[256];
+		FormatEx(cockchBuff, sizeof(cockchBuff), "%s", czCockMsg[GetRandomInt(0,1)]);
+		FormatEx(buffer, sizeof(buffer), "%N: ",client);
+		StrCat(buffer, sizeof(buffer), cockchBuff)
+		PrintToChatAll(buffer);
+		return Plugin_Handled
 	}
+	return Plugin_Continue
 }
 
 bool WeaponDickAction(client)
 {
-	if(/* !IsFakeClient(client) &&  */IsClientInGame(client) && bWeapDick[client] != true)
+	if(!IsFakeClient(client) &&  IsClientInGame(client) && bWeapDick[client] != true)
 	{
 		for (int slot = 0; slot < 6; slot++)
 		{
@@ -189,9 +181,8 @@ bool WeaponDickAction(client)
 				}
 			}
 		}
-		int WeaponINDEX = CS_WeaponIDToItemDefIndex(CSWeapon_KNIFE);
-		EquipPlayerWeapon(client,WeaponINDEX);
-		bWeapDick[client]=true;
+		GivePlayerItem(client,"weapon_knife");
+		bWeapDick[client] = true;
 	}
 }
 
@@ -208,7 +199,7 @@ bool DickModel(client)
 	{
 		if(!bDickMdl[client])
 		{
-			SetEntityModel(client,czDownloadPaths[4][PLATFORM_MAX_PATH]);
+			SetEntityModel(client,"models/player/custom_player/kaesar/chickenleet/chickenleet.mdl");
 			bDickMdl[client] = true;
 		}
 		else
@@ -236,23 +227,21 @@ bool CockSound(client)
 	else bCockSnd[client] = true;
 }
 
-public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float vel[3], float angles[3], int &weapon, int &subtype, int &cmdnum, int &tickcount, int &seed, int mouse[2])
+public void OnPlayerRunCmdPost(int client, int buttons, int impulse, const float vel[3], const float angles[3], int weapon, int subtype, int cmdnum, int tickcount, int seed, const int mouse[2])
 {
+	buttons = GetClientButtons(client)
 	float fClientOrig[3];
 	GetClientAbsOrigin(client, fClientOrig);
 	if(client && IsClientInGame(client))
 	{
 		if(bCockSnd[client])
 		{
-			if(buttons & IN_USE || IN_DUCK || IN_ATTACK)
+			if(buttons & IN_USE || buttons & IN_DUCK )
 			{
-				char buff[PLATFORM_MAX_PATH];
-				ReplaceStringEx(czDownloadPaths[sizeof(czDownloadPaths)-1], sizeof(buff), "sound/", "*/");
-				EmitAmbientSound(czDownloadPaths[sizeof(czDownloadPaths)-1], fClientOrig, client, SNDLEVEL_HELICOPTER);
+				EmitSoundToAll("*/FuckBan/CockSndDir/cockChat.mp3", client, SNDCHAN_AUTO, SNDLEVEL_NORMAL, SND_NOFLAGS, SNDVOL_NORMAL, SNDPITCH_NORMAL, _, fClientOrig, _, true, 5.0);
 			}
 		}
 	}
-	return Plugin_Continue;
 }
 
 bool DisableDamage(client)
@@ -292,8 +281,7 @@ public Action BanTimerCallBack(Handle hTimer, client)
 {
 	if(ghTimer[client] != INVALID_HANDLE)
 	{
-		MABanPlayer(2, client, 0, 0, "?Cheater?")
-		//MaBanPlayer(0, client, MA_BAN_STEAM, 0, "?Cheater?");
+		MABanPlayer(0, client, 0, 0, "?Cheater?")
 		KillTimer(ghTimer[client]);
 		ghTimer[client] = null;
 	}
