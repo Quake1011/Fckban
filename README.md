@@ -1,8 +1,6 @@
 # Fuckban
 
-## Functions
-
-### some of
+### functions
 
 1) Take off all weapon and give a knife using dick model for violator 
 2) Set violator`s model using dick or cock bigger size 
