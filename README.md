@@ -1,6 +1,7 @@
 ## Fuckban
 
-#Functions
+# Functions
+
 1) Take off all weapon and give a knife using dick model for violator 
 2) Set violator`s model using dick or cock bigger size 
 3) Hook all messages of violator while replacing to some text example: "I am a cock" "co-co-co" 
