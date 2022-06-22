@@ -9,3 +9,7 @@
 5) Turn off damage for violators 
 6) While hurting for other players - violator to taking over his to himself about N - count of health point 
 7) Turn on the ban timer after the N-count of time
+
+## requirements 
+https://hlmod.ru/resources/directory-downloader.660/ - for download some files
+https://github.com/SB-MaterialAdmin/NewServer - for ban and compile
