@@ -11,5 +11,5 @@
 7) Turn on the ban timer after the N-count of time
 
 ## requirements 
-https://hlmod.ru/resources/directory-downloader.660/ - for download some files
-https://github.com/SB-MaterialAdmin/NewServer - for ban and compile
+1) https://hlmod.ru/resources/directory-downloader.660/ - for download some files
+2) https://github.com/SB-MaterialAdmin/NewServer - for ban and compile
