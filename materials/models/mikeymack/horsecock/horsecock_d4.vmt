@@ -1,0 +1,27 @@
+"VertexLitGeneric"
+{
+
+	"$baseTexture" 		"models/mikeymack/horsecock/horsecock_d4"
+	"$bumpmap" 		"models/mikeymack/horsecock/horsecock_n"
+	"$lightwarptexture" "models/mikeymack/horsecock/lightwarp"
+	
+	"$nocull" "1"
+	$halflambert 1
+
+	"$phong" "1"
+	"$phongboost" "3"
+	"$phongexponent" "40"
+	"$phongexponenttexture" 	"models/mikeymack/horsecock/phong"
+	"$phongalbedotint" "1"
+	$phongtint "[.85 .85 1]"
+	$phongfresnelranges "[.3 3 30]"
+
+	"$detail" "models/mikeymack/horsecock/detail_skin"
+	$detailscale 10
+	$detailblendfactor 1
+	$detailblendmode 0
+	
+	$rimlight 1
+	$rimlightexponent       25
+	$rimlightboost          .2	
+}

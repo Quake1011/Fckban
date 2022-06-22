@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/player/kaesar/chickenleet/t_leet_glass"
+	"$translucent" 1
+	"$nocull" 1
+}
