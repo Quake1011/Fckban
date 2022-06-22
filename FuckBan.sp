@@ -1,7 +1,6 @@
 #include <sourcemod>
-#include <adminmenu>
 #include <sdkhooks>
-#include <tf2_stocks>
+#include <sdktools>
 #include <materialadmin>
 #include <cstrike>
 
@@ -19,8 +18,8 @@ bool
 Handle ghTimer[MAXPLAYERS+1];
 
 char czCockMsg[][] = {
-	"РљРѕ-РљРѕ-РљРѕ",
-	"РЇ РїРµС‚СѓС€Р°СЂР°"
+	"Ко-Ко-Ко",
+	"Я петушара"
 }
 
 float dmgEnt[MAXPLAYERS+1];
@@ -78,10 +77,10 @@ char czDownloadPaths[][] = {
 public void OnPluginStart()
 {
     HookEvent("player_hurt", Event_PlayerHurt);
-    HookEvent("round_start", Event_RoundStart);
+/*     HookEvent("round_start", Event_RoundStart);
     HookEvent("round_end", Event_RoundEnd);
     HookEvent("player_spawn", Event_PlayerSpawn);
-    HookEvent("player_death", Event_PlayerDeath);
+    HookEvent("player_death", Event_PlayerDeath); */
 	AddCommandListener(SayCB,"say");
 
     RegAdminCmd("helloban", CMD_FuckBan, ADMFLAG_ROOT);
@@ -177,13 +176,29 @@ public Action SayCB(int client, const char[] command, int argc)
 
 bool WeaponDickAction(client)
 {
-	if(!IsFakeClient(client) && IsClientInGame(client) && bWeapDick[client]!=true)
+	if(/* !IsFakeClient(client) &&  */IsClientInGame(client) && bWeapDick[client] != true)
 	{
-		TF2_RemoveAllWeapons(client);
+		for (int slot = 0; slot < 6; slot++)
+		{
+			int index;
+			if ((index = GetPlayerWeaponSlot(client, slot)) >= 0)
+			{
+				if (index != -1)
+				{
+					DelWeaponOfIndex(client, index);
+				}
+			}
+		}
 		int WeaponINDEX = CS_WeaponIDToItemDefIndex(CSWeapon_KNIFE);
 		EquipPlayerWeapon(client,WeaponINDEX);
 		bWeapDick[client]=true;
 	}
+}
+
+DelWeaponOfIndex(client, index_weapon)
+{
+    RemovePlayerItem(client, index_weapon);
+    AcceptEntityInput(index_weapon, "Kill");
 }
 
 bool DickModel(client)
