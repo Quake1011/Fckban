@@ -1,6 +1,8 @@
 #include <sourcemod>
 #include <adminmenu>
+#include <sdkhooks>
 #include <tf2_stocks>
+#include <materialadmin>
 #include <cstrike>
 
 #pragma tabsize 4
@@ -12,12 +14,16 @@ bool
 	bCockSnd[MAXPLAYERS+1],
 	bDisDmg[MAXPLAYERS+1],
 	bMtlDmg[MAXPLAYERS+1],
-	bBanTimer[MAXPLAYERS+1];
+	bBanTimer[MAXPLAYERS+1]
+
+Handle ghTimer[MAXPLAYERS+1];
 
 char czCockMsg[][] = {
-	"Ко-Ко-Ко",
-	"Я петушара"
+	"РљРѕ-РљРѕ-РљРѕ",
+	"РЇ РїРµС‚СѓС€Р°СЂР°"
 }
+
+float dmgEnt[MAXPLAYERS+1];
 
 char czDefaultModelPlayer[MAXPLAYERS+1][PLATFORM_MAX_PATH];
 
@@ -65,7 +71,8 @@ char czDownloadPaths[][] = {
 	"materials/models/mikeymack/horsecock/horsecock_n.vtf",
 	"materials/models/mikeymack/horsecock/phong.vtf",
 	"materials/models/mikeymack/horsecock/detail_skin.vtf",
-	"materials/models/mikeymack/horsecock/lightwarp.vtf"
+	"materials/models/mikeymack/horsecock/lightwarp.vtf",
+	"sound/FuckBan/CockSndDir/cockChat.mp3"
 }
 
 public void OnPluginStart()
@@ -80,14 +87,12 @@ public void OnPluginStart()
     RegAdminCmd("helloban", CMD_FuckBan, ADMFLAG_ROOT);
 }
 
-public void OnClientPostAdminCheck()
+public void OnClientDisconnectPre(client)
 {
-
-}
-
-public void OnClientDisconnect()
-{
-
+	if(bBanTimer[client])
+	{
+		CreateTimer(0.0, BanTimerCallBack, client);
+	}
 }
 
 public void OnMapStart()
@@ -98,23 +103,18 @@ public void OnMapStart()
         {
             PrecacheModel(czDownloadPaths[i], true);
         }
-        else if(StrContains(czDownloadPaths[i],".mp3")||StrContains(czDownloadPaths[i],".wav"))
+        else if(StrContains(czDownloadPaths[i],".mp3") || StrContains(czDownloadPaths[i],".wav"))
         {
             char buff[PLATFORM_MAX_PATH];
-            ReplaceStringEx(czDownloadPaths[i], sizeof(buff), "sound/", "*/")
-            PrecacheSound(czDownloadPaths[i], true)
+            ReplaceStringEx(czDownloadPaths[i], sizeof(buff), "sound/", "*/");
+            PrecacheSound(czDownloadPaths[i], true);
         }
     }
 }
 
-public void OnMapEnd()
-{
-
-}
-
 public Action CMD_FuckBan(client, int args)
 {
-	OnCreateMainMenu(client, true)
+	OnCreateMainMenu(client, true);
 }
 
 public void OnCreateMainMenu(client, bool withTargets)
@@ -167,7 +167,7 @@ public int mMenu_Handler(Menu menu, MenuAction action, client, int item)
 
 public Action SayCB(int client, const char[] command, int argc)
 {
-	if(bCockCh[client]==true)
+	if(bCockCh[client])
 	{
 		char cockchBuff[256];
 		FormatEx(cockchBuff, sizeof(cockchBuff), "%s", czCockMsg[GetRandomInt(0,1)])
@@ -175,70 +175,135 @@ public Action SayCB(int client, const char[] command, int argc)
 	}
 }
 
-public Action WeaponDickAction(client)
+bool WeaponDickAction(client)
 {
 	if(!IsFakeClient(client) && IsClientInGame(client) && bWeapDick[client]!=true)
 	{
 		TF2_RemoveAllWeapons(client);
-		int WeaponINDEX = CS_WeaponIDToItemDefIndex(CSWeapon_KNIFE)
+		int WeaponINDEX = CS_WeaponIDToItemDefIndex(CSWeapon_KNIFE);
 		EquipPlayerWeapon(client,WeaponINDEX);
 		bWeapDick[client]=true;
 	}
 }
 
-public Action DickModel(client)
+bool DickModel(client)
 {
 	GetClientModel(client, czDefaultModelPlayer[client], sizeof(czDefaultModelPlayer));
 	if(!IsFakeClient(client) && IsClientInGame(client))
 	{
-		if(bDickMdl[client]!=true)
+		if(!bDickMdl[client])
 		{
 			SetEntityModel(client,czDownloadPaths[4][PLATFORM_MAX_PATH]);
-			bDickMdl[client]=true;
+			bDickMdl[client] = true;
 		}
 		else
 		{
-			bDickMdl[client]=false;
 			SetEntityModel(client,czDefaultModelPlayer[client])
 		}
 	}
 }
 
-public Action CockChat(client)
+bool CockChat(client)
 {
-	bCockCh[client]=true;
-	if(bCockCh[client]==true)
+	if(bCockCh[client])
 	{
-		bCockCh[client]=false;
+		bCockCh[client] = false;
+	}
+	else bCockCh[client] = true;
+}
+
+bool CockSound(client)
+{
+	if(bCockSnd[client])
+	{
+		bCockSnd[client] = false;
+	}
+	else bCockSnd[client] = true;
+}
+
+public Action OnPlayerRunCmd(int client, int &buttons, int &impulse, float vel[3], float angles[3], int &weapon, int &subtype, int &cmdnum, int &tickcount, int &seed, int mouse[2])
+{
+	float fClientOrig[3];
+	GetClientAbsOrigin(client, fClientOrig);
+	if(client && IsClientInGame(client))
+	{
+		if(bCockSnd[client])
+		{
+			if(buttons & IN_USE || IN_DUCK || IN_ATTACK)
+			{
+				char buff[PLATFORM_MAX_PATH];
+				ReplaceStringEx(czDownloadPaths[sizeof(czDownloadPaths)-1], sizeof(buff), "sound/", "*/");
+				EmitAmbientSound(czDownloadPaths[sizeof(czDownloadPaths)-1], fClientOrig, client, SNDLEVEL_HELICOPTER);
+			}
+		}
+	}
+	return Plugin_Continue;
+}
+
+bool DisableDamage(client)
+{
+	if(bDisDmg[client])
+	{
+		bDisDmg[client] = false;
+	}
+	else bDisDmg[client] = true;
+}
+
+bool MutualDamage(client)
+{
+	if(bMtlDmg[client])
+	{
+		bMtlDmg[client] = false;
+	}
+	else bMtlDmg[client] = true;
+}
+
+bool BanTimer(client)
+{
+	if(bBanTimer[client])
+	{
+		bBanTimer[client] = false;
+		KillTimer(ghTimer[client]);
+		ghTimer[client] = null;
+	}
+	else 
+	{	
+		bBanTimer[client] = true;
+		ghTimer[client] = CreateTimer(1800.0, BanTimerCallBack, client);
 	}
 }
 
-public Action CockSound(client)
+public Action BanTimerCallBack(Handle hTimer, client)
 {
-	
-}
-
-public Action DisableDamage(client)
-{
-	
-}
-
-public Action MutualDamage(client)
-{
-	
-}
-
-public Action BanTimer(client)
-{
-	
+	if(ghTimer[client] != INVALID_HANDLE)
+	{
+		MABanPlayer(2, client, 0, 0, "?Cheater?")
+		//MaBanPlayer(0, client, MA_BAN_STEAM, 0, "?Cheater?");
+		KillTimer(ghTimer[client]);
+		ghTimer[client] = null;
+	}
 }
 
 public Action Event_PlayerHurt(Event hEvent, const char[] sEvent, bool bDontBroadcast)
 {
-
+	int iAttacker = GetClientOfUserId(hEvent.GetInt("attacker"));
+	dmgEnt[iAttacker] = GetEntPropFloat(iAttacker, Prop_Send, "m_flDamage");
+	int iAttHp = GetEntProp(iAttacker, Prop_Send, "m_iHealth");
+	if(bDisDmg[iAttacker])
+	{
+		if(dmgEnt[iAttacker] > 0.0)
+		{
+			SetEntPropFloat(iAttacker, Prop_Send, "m_flDamage", 0.0);
+		}
+		if(bMtlDmg[iAttacker])
+		{
+			SetEntProp(iAttacker, Prop_Send, "m_iHealth",(iAttHp-10));
+		}
+	}
+	return Plugin_Continue;
 }
 
-public Action Event_RoundStart(Event hEvent, const char[] sEvent, bool bDontBroadcast)
+/* public Action Event_RoundStart(Event hEvent, const char[] sEvent, bool bDontBroadcast)
 {
 
 }
@@ -256,4 +321,4 @@ public Action Event_PlayerSpawn(Event hEvent, const char[] sEvent, bool bDontBro
 public Action Event_PlayerDeath(Event hEvent, const char[] sEvent, bool bDontBroadcast)
 {
 
-}
+} */
