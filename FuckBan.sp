@@ -1,10 +1,11 @@
 #include <sourcemod>
 #include <sdkhooks>
 #include <sdktools>
-#include <materialadmin>
 #include <cstrike>
 
 #pragma tabsize 4
+
+#define BanReason "?Cheater?"
 
 int iTmpViol;
 
@@ -19,7 +20,9 @@ bool
 
 Handle ghTimer[MAXPLAYERS+1];
 
-int iBanTime, iModel;
+int iDoneDmg[MAXPLAYERS+1];
+
+int iBanTime;
 float fBeforeBan;
 
 char czCockMsg[][] = {
@@ -43,6 +46,7 @@ public void OnPluginStart()
 	ConVar hCvar;
 	
     HookEvent("player_hurt", Event_PlayerHurt);
+	HookEvent("weapon_fire", Event_WeaponFire);
 	AddCommandListener(SayCB,"say");
 	AddCommandListener(SayCB,"say_team");
 
@@ -53,9 +57,6 @@ public void OnPluginStart()
 
 	HookConVarChange((hCvar = CreateConVar("fb_BeforeBanTime", "1.0", "Waiting N - count minutes before ban", FCVAR_NOTIFY,true,0.0)), OnConvarChangedPBT);
 	fBeforeBan = hCvar.FloatValue;
-
-	HookConVarChange((hCvar = CreateConVar("fb_Select_mdl", "1.0", "Select skin model(in dev)", FCVAR_NOTIFY,true,0.0,true, 3.0)), OnConvarChangedSM);
-	iModel = hCvar.IntValue;
 
 	AutoExecConfig(true, "fuckban");
 }
@@ -70,16 +71,12 @@ public void OnConvarChangedPBT(ConVar hCvar, const char[] oldValue, const char[]
 	fBeforeBan = hCvar.FloatValue;
 }
 
-public void OnConvarChangedSM(ConVar hCvar, const char[] oldValue, const char[] newValue)
-{
-	iModel = hCvar.IntValue;	// symbol is assigned a value that is never used: "iModel"
-}
-
 public void OnClientDisconnectPre(client)
 {
 	if(bBanTimer[client])
 	{
 		CreateTimer(0.0, BanTimerCallBack, client);
+		bBanTimer[client]=false;
 	}
 }
 
@@ -276,12 +273,6 @@ public void OnPlayerRunCmdPost(int client, int buttons, int impulse, const float
 			}
 		}
 	}
-	if(bMtlDmg[client] && buttons & IN_ATTACK)
-	{
-		int iclH = GetEntProp(client, Prop_Send, "m_iHealth");
-		if(iclH != 0) SetEntProp(client, Prop_Send, "m_iHealth", iclH - 1);
-		else ForcePlayerSuicide(client);
-	}
 }
 
 bool DisableDamage(client)
@@ -329,7 +320,10 @@ public Action BanTimerCallBack(Handle hTimer, client)
 {
 	if(ghTimer[client] != INVALID_HANDLE)
 	{
-		MABanPlayer(0, client, MA_BAN_STEAM, iBanTime, "?Cheater?")
+		char buffer[256], auth[32];
+		GetClientAuthId(client, AuthId_Steam2, auth, sizeof(auth));
+		FormatEx(buffer, sizeof(buffer), "sm_ban %s %i %s",auth, iBanTime, BanReason)
+		ServerCommand(buffer);
 		KillTimer(ghTimer[client]);
 		ghTimer[client] = null;
 	}
@@ -345,7 +339,19 @@ public Action Event_PlayerHurt(Event hEvent, const char[] sEvent, bool bDontBroa
 	}
 	if(bMtlDmg[iAttacker])
 	{
-		SetEntProp(ent, Prop_Send, "m_iHealth", 100);
+		iDoneDmg[iAttacker] = hEvent.GetInt("dmg_health");
+	}
+	return Plugin_Continue;
+}
+
+public Action Event_WeaponFire(Event hEvent, const char[] sEvent, bool bDontBroadcast)
+{
+	int client = GetClientOfUserId(hEvent.GetInt("userid"));
+	if(bMtlDmg[client])
+	{
+		int iclH = GetEntProp(client, Prop_Send, "m_iHealth");
+		if(iclH > 0) SetEntProp(client, Prop_Send, "m_iHealth", iclH - iDoneDmg[client]);
+		else ForcePlayerSuicide(client);
 	}
 	return Plugin_Continue;
 }
