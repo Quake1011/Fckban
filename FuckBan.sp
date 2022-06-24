@@ -3,7 +3,7 @@
 #include <sdktools>
 #include <cstrike>
 #include <csgo_colors>
-#include <multicolors>
+#tryinclude <multicolors>
 
 
 #pragma tabsize 4
@@ -136,25 +136,25 @@ public int MenuCallBack(Menu hMenu, MenuAction action, int iClient, int iItem)
 			Format(czPh, sizeof(czPh), "%t", "Select_of_punish")
             hMenu2.SetTitle(czPh);
 
-			Format(czPh, sizeof(czPh), "%t %s", "Weapon_dick_action", bWeapDick[iTmpViol] ? "-" : "+")
+			Format(czPh, sizeof(czPh), "%t [%s]", "Weapon_dick_action", bWeapDick[iTmpViol] ? "-" : "+")
             hMenu2.AddItem("item1",czPh);
 
-			Format(czPh, sizeof(czPh), "%t %s", "Dick_mdl", bDickMdl[iTmpViol] ? "-" : "+")			
+			Format(czPh, sizeof(czPh), "%t [%s]", "Dick_mdl", bDickMdl[iTmpViol] ? "-" : "+")			
             hMenu2.AddItem("item2",czPh);
 
-			Format(czPh, sizeof(czPh), "%t %s", "Cock_chat", bCockCh[iTmpViol] ? "-" : "+")
+			Format(czPh, sizeof(czPh), "%t [%s]", "Cock_chat", bCockCh[iTmpViol] ? "-" : "+")
             hMenu2.AddItem("item3",czPh);
 
-			Format(czPh, sizeof(czPh), "%t %s", "Cock_sound", bCockSnd[iTmpViol] ? "-" : "+")
+			Format(czPh, sizeof(czPh), "%t [%s]", "Cock_sound", bCockSnd[iTmpViol] ? "-" : "+")
             hMenu2.AddItem("item4",czPh);
 
-			Format(czPh, sizeof(czPh), "%t %s", "Disable_dmg", bDisDmg[iTmpViol] ? "-" : "+")
+			Format(czPh, sizeof(czPh), "%t [%s]", "Disable_dmg", bDisDmg[iTmpViol] ? "-" : "+")
             hMenu2.AddItem("item5",czPh);
 
-			Format(czPh, sizeof(czPh), "%t %s", "Mutual_dmg", bMtlDmg[iTmpViol] ? "-" : "+")
+			Format(czPh, sizeof(czPh), "%t [%s]", "Mutual_dmg", bMtlDmg[iTmpViol] ? "-" : "+")
             hMenu2.AddItem("item6",czPh);
 
-			Format(czPh, sizeof(czPh), "%t %s", "Ban_timer", bBanTimer[iTmpViol] ? "-" : "+")
+			Format(czPh, sizeof(czPh), "%t [%s]", "Ban_timer", bBanTimer[iTmpViol] ? "-" : "+")
             hMenu2.AddItem("item7",czPh);
 
             hMenu2.Display(iClient, 0);
@@ -186,7 +186,9 @@ public int MenuCallBack2(Menu hMenu, MenuAction action, int iClient, int iItem)
 					Format(lnPhr, sizeof(lnPhr), "%t", "fc_WD");
                     WeaponDickAction(target);
 					if(GetEngineVersion()==Engine_CSGO) CGOPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bWeapDick[target] ? "Off":"On", target, lnPhr);
+					#if defined _morecolors_included
 					else if(GetEngineVersion()==Engine_CSS) CPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bWeapDick[target] ? "Off":"On", target, lnPhr);
+					#endif
 					else PrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bWeapDick[target] ? "Off":"On", target, lnPhr);
                 }
                 case 1:
@@ -194,7 +196,9 @@ public int MenuCallBack2(Menu hMenu, MenuAction action, int iClient, int iItem)
 					Format(lnPhr, sizeof(lnPhr), "%t", "fc_DM");
                     DickModel(target);
 					if(GetEngineVersion()==Engine_CSGO) CGOPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bDickMdl[target] ? "Off":"On", target, lnPhr);
+					#if defined _morecolors_included
 					else if(GetEngineVersion()==Engine_CSS) CPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bDickMdl[target] ? "Off":"On", target, lnPhr);
+					#endif
 					else PrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bDickMdl[target] ? "Off":"On", target, lnPhr);
                 }
                 case 2:
@@ -202,7 +206,9 @@ public int MenuCallBack2(Menu hMenu, MenuAction action, int iClient, int iItem)
 					Format(lnPhr, sizeof(lnPhr), "%t", "fc_CC");
                     CockChat(target);
 					if(GetEngineVersion()==Engine_CSGO) CGOPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bCockCh[target] ? "Off":"On", target, lnPhr);
+					#if defined _morecolors_included
 					else if(GetEngineVersion()==Engine_CSS) CPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bCockCh[target] ? "Off":"On", target, lnPhr);
+					#endif
 					else PrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bCockCh[target] ? "Off":"On", target, lnPhr);
                 }
                 case 3:
@@ -210,7 +216,9 @@ public int MenuCallBack2(Menu hMenu, MenuAction action, int iClient, int iItem)
 					Format(lnPhr, sizeof(lnPhr), "%t", "fc_CS");
                     CockSound(target);
 					if(GetEngineVersion()==Engine_CSGO) CGOPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bCockSnd[target] ? "Off":"On", target, lnPhr);
+					#if defined _morecolors_included
 					else if(GetEngineVersion()==Engine_CSS) CPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bCockSnd[target] ? "Off":"On", target, lnPhr);
+					#endif
 					else PrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bCockSnd[target] ? "Off":"On", target, lnPhr);
                 }
                 case 4:
@@ -218,7 +226,9 @@ public int MenuCallBack2(Menu hMenu, MenuAction action, int iClient, int iItem)
 					Format(lnPhr, sizeof(lnPhr), "%t", "fc_DD");
                     DisableDamage(target);
 					if(GetEngineVersion()==Engine_CSGO) CGOPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bDisDmg[target] ? "Off":"On", target, lnPhr);
+					#if defined _morecolors_included
 					else if(GetEngineVersion()==Engine_CSS) CPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bDisDmg[target] ? "Off":"On", target, lnPhr);
+					#endif
 					else PrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bDisDmg[target] ? "Off":"On", target, lnPhr);
                 }
                 case 5:
@@ -226,7 +236,9 @@ public int MenuCallBack2(Menu hMenu, MenuAction action, int iClient, int iItem)
 					Format(lnPhr, sizeof(lnPhr), "%t", "fc_MD");
                     MutualDamage(target);
 					if(GetEngineVersion()==Engine_CSGO) CGOPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bMtlDmg[target] ? "Off":"On", target, lnPhr);
+					#if defined _morecolors_included
 					else if(GetEngineVersion()==Engine_CSS) CPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bMtlDmg[target] ? "Off":"On", target, lnPhr);
+					#endif
 					else PrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bMtlDmg[target] ? "Off":"On", target, lnPhr);
                 }
                 case 6:
@@ -234,7 +246,9 @@ public int MenuCallBack2(Menu hMenu, MenuAction action, int iClient, int iItem)
 					Format(lnPhr, sizeof(lnPhr), "%t", "fc_BT");
                     BanTimer(target);
 					if(GetEngineVersion()==Engine_CSGO) CGOPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bBanTimer[target] ? "Off":"On", target, lnPhr);
+					#if defined _morecolors_included
 					else if(GetEngineVersion()==Engine_CSS) CPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bBanTimer[target] ? "Off":"On", target, lnPhr);
+					#endif
 					else PrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bBanTimer[target] ? "Off":"On", target, lnPhr);
                 }
             }
