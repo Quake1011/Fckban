@@ -1,0 +1,99 @@
+"Phrases"
+{
+	"Select_player"
+	{
+		"ru"	"Выбор игрока"
+		"en"	"Select a player"
+	}
+	"Select_of_punish"
+	{
+		"ru"	"Выбор наказания"
+		"en"	"Select punish"
+	}
+	"Weapon_dick_action"
+	{
+		"ru"	"Установить Dick Weapon"
+		"en"	"Set a Dick Weapon"
+	}
+	"Dick_mdl"
+	{
+		"ru"	"Установить модель Dick"
+		"en"	"Set a Dick Model"
+	}
+	"Cock_chat"
+	{
+		"ru"	"Включить петушиный чат"
+		"en"	"Turn on a cock chat"
+	}
+	"Cock_sound"
+	{
+		"ru"	"Включить петушиные звуки"
+		"en"	"Turn on a cock sounds"
+	}
+	"Disable_dmg"
+	{
+		"ru"	"Выключить урон"
+		"en"	"Off Damage"
+	}
+	"Mutual_dmg"
+	{
+		"ru"	"Включить обратный урон"
+		"en"	"Turn on Mutual Damage"
+	}
+	"Ban_timer"
+	{
+		"ru"	"Запусть таймер до блокировки"
+		"en"	"To start timer until block"
+	}
+	"SetFuncToPlayer"
+	{
+		"#format"	"{1:N}"
+		"ru"		"Для игрока {1}"
+		"en"		"For player {1}"
+	}
+	"On"
+	{
+		"ru"		"включено"
+		"en"		"on"
+	}
+	"Off"
+	{
+		"ru"		"выключено"
+		"en"		"off"
+	}
+	"fc_WD"
+	{
+		"ru"		"Оружие - Dick"
+		"en"		"Weapon Dick"
+	}
+	"fc_DM"
+	{
+		"ru"		"Модель Dick"
+		"en"		"Dick Model"
+	}
+	"fc_CC"
+	{
+		"ru"		"Петушиный чат"
+		"en"		"Cock Chat"
+	}
+	"fc_CS"
+	{
+		"ru"		"Петушиные звуки"
+		"en"		"Cock Sounds"
+	}
+	"fc_DD"
+	{
+		"ru"		"Выключение урона"
+		"en"		"Disable Damage"
+	}
+	"fc_MD"
+	{
+		"ru"		"Обратный урон"
+		"en"		"Mutual Damage"
+	}
+	"fc_BT"
+	{
+		"ru"		"Таймер до бана"
+		"en"		"Ban Timer"
+	}
+}
