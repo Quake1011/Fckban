@@ -2,98 +2,98 @@
 {
 	"Select_player"
 	{
-		"ru"	"Выбор игрока"
+		"ru"	"Р’С‹Р±РѕСЂ РёРіСЂРѕРєР°"
 		"en"	"Select a player"
 	}
 	"Select_of_punish"
 	{
-		"ru"	"Выбор наказания"
+		"ru"	"Р’С‹Р±РѕСЂ РЅР°РєР°Р·Р°РЅРёСЏ"
 		"en"	"Select punish"
 	}
 	"Weapon_dick_action"
 	{
-		"ru"	"Установить Dick Weapon"
+		"ru"	"РЈСЃС‚Р°РЅРѕРІРёС‚СЊ Dick Weapon"
 		"en"	"Set a Dick Weapon"
 	}
 	"Dick_mdl"
 	{
-		"ru"	"Установить модель Dick"
+		"ru"	"РЈСЃС‚Р°РЅРѕРІРёС‚СЊ РјРѕРґРµР»СЊ Dick"
 		"en"	"Set a Dick Model"
 	}
 	"Cock_chat"
 	{
-		"ru"	"Включить петушиный чат"
+		"ru"	"Р’РєР»СЋС‡РёС‚СЊ РїРµС‚СѓС€РёРЅС‹Р№ С‡Р°С‚"
 		"en"	"Turn on a cock chat"
 	}
 	"Cock_sound"
 	{
-		"ru"	"Включить петушиные звуки"
+		"ru"	"Р’РєР»СЋС‡РёС‚СЊ РїРµС‚СѓС€РёРЅС‹Рµ Р·РІСѓРєРё"
 		"en"	"Turn on a cock sounds"
 	}
 	"Disable_dmg"
 	{
-		"ru"	"Выключить урон"
+		"ru"	"Р’С‹РєР»СЋС‡РёС‚СЊ СѓСЂРѕРЅ"
 		"en"	"Off Damage"
 	}
 	"Mutual_dmg"
 	{
-		"ru"	"Включить обратный урон"
+		"ru"	"Р’РєР»СЋС‡РёС‚СЊ РѕР±СЂР°С‚РЅС‹Р№ СѓСЂРѕРЅ"
 		"en"	"Turn on Mutual Damage"
 	}
 	"Ban_timer"
 	{
-		"ru"	"Запусть таймер до блокировки"
+		"ru"	"Р—Р°РїСѓСЃС‚СЊ С‚Р°Р№РјРµСЂ РґРѕ Р±Р»РѕРєРёСЂРѕРІРєРё"
 		"en"	"To start timer until block"
 	}
 	"SetFuncToPlayer"
 	{
 		"#format"	"{1:N}"
-		"ru"		"Для игрока {1}"
+		"ru"		"Р”Р»СЏ РёРіСЂРѕРєР° {1}"
 		"en"		"For player {1}"
 	}
 	"On"
 	{
-		"ru"		"включено"
+		"ru"		"РІРєР»СЋС‡РµРЅРѕ"
 		"en"		"on"
 	}
 	"Off"
 	{
-		"ru"		"выключено"
+		"ru"		"РІС‹РєР»СЋС‡РµРЅРѕ"
 		"en"		"off"
 	}
 	"fc_WD"
 	{
-		"ru"		"Оружие - Dick"
+		"ru"		"РћСЂСѓР¶РёРµ - Dick"
 		"en"		"Weapon Dick"
 	}
 	"fc_DM"
 	{
-		"ru"		"Модель Dick"
+		"ru"		"РњРѕРґРµР»СЊ Dick"
 		"en"		"Dick Model"
 	}
 	"fc_CC"
 	{
-		"ru"		"Петушиный чат"
+		"ru"		"РџРµС‚СѓС€РёРЅС‹Р№ С‡Р°С‚"
 		"en"		"Cock Chat"
 	}
 	"fc_CS"
 	{
-		"ru"		"Петушиные звуки"
+		"ru"		"РџРµС‚СѓС€РёРЅС‹Рµ Р·РІСѓРєРё"
 		"en"		"Cock Sounds"
 	}
 	"fc_DD"
 	{
-		"ru"		"Выключение урона"
+		"ru"		"Р’С‹РєР»СЋС‡РµРЅРёРµ СѓСЂРѕРЅР°"
 		"en"		"Disable Damage"
 	}
 	"fc_MD"
 	{
-		"ru"		"Обратный урон"
+		"ru"		"РћР±СЂР°С‚РЅС‹Р№ СѓСЂРѕРЅ"
 		"en"		"Mutual Damage"
 	}
 	"fc_BT"
 	{
-		"ru"		"Таймер до бана"
+		"ru"		"РўР°Р№РјРµСЂ РґРѕ Р±Р°РЅР°"
 		"en"		"Ban Timer"
 	}
 }
