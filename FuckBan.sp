@@ -2,6 +2,9 @@
 #include <sdkhooks>
 #include <sdktools>
 #include <cstrike>
+#include <csgo_colors>
+#include <multicolors>
+
 
 #pragma tabsize 4
 
@@ -59,6 +62,8 @@ public void OnPluginStart()
 	fBeforeBan = hCvar.FloatValue;
 
 	AutoExecConfig(true, "fuckban");
+
+	LoadTranslations("fuckban.phrases.txt")
 }
 
 public void OnConvarChangedBT(ConVar hCvar, const char[] oldValue, const char[] newValue)
@@ -76,8 +81,13 @@ public void OnClientDisconnectPre(client)
 	if(bBanTimer[client])
 	{
 		CreateTimer(0.0, BanTimerCallBack, client);
-		bBanTimer[client]=false;
 	}
+	bWeapDick[client]=false;
+	bDickMdl[client]=false;
+	bCockCh[client]=false;
+	bCockSnd[client]=false;
+	bDisDmg[client]=false;
+	bMtlDmg[client]=false;
 }
 
 public void OnMapStart()
@@ -87,8 +97,10 @@ public void OnMapStart()
 
 public Action CMD_FuckBan(int client, int args)
 {
+	char buffers[64];
     Menu hMenu = CreateMenu(MenuCallBack);
-    hMenu.SetTitle("Выбор игрока");
+	Format(buffers, sizeof(buffers), "%t", "Select_player")
+    hMenu.SetTitle(buffers);
     for(int i = 1; i <= MaxClients; i++)
     {
         if(IsClientInGame(i))
@@ -108,6 +120,7 @@ public Action CMD_FuckBan(int client, int args)
 public int MenuCallBack(Menu hMenu, MenuAction action, int iClient, int iItem)
 {
     char buffer[64];
+	char czPh[128];
     switch(action)
     {
         case MenuAction_End:
@@ -119,14 +132,31 @@ public int MenuCallBack(Menu hMenu, MenuAction action, int iClient, int iItem)
             hMenu.GetItem(iItem, buffer, sizeof(buffer))
             iTmpViol = StringToInt(buffer);
             Menu hMenu2 = CreateMenu(MenuCallBack2);
-            hMenu2.SetTitle("Выбор наказания");
-            hMenu2.AddItem("item1","Weapon Dick Action");
-            hMenu2.AddItem("item2","Dick Model");
-            hMenu2.AddItem("item3","Cock Chat");
-            hMenu2.AddItem("item4","Cock Sound");
-            hMenu2.AddItem("item5","Disable Damage");
-            hMenu2.AddItem("item6","Mutual Damage");
-            hMenu2.AddItem("item7","Ban Timer");
+
+			Format(czPh, sizeof(czPh), "%t", "Select_of_punish")
+            hMenu2.SetTitle(czPh);
+
+			Format(czPh, sizeof(czPh), "%t %s", "Weapon_dick_action", bWeapDick[iTmpViol] ? "-" : "+")
+            hMenu2.AddItem("item1",czPh);
+
+			Format(czPh, sizeof(czPh), "%t %s", "Dick_mdl", bDickMdl[iTmpViol] ? "-" : "+")			
+            hMenu2.AddItem("item2",czPh);
+
+			Format(czPh, sizeof(czPh), "%t %s", "Cock_chat", bCockCh[iTmpViol] ? "-" : "+")
+            hMenu2.AddItem("item3",czPh);
+
+			Format(czPh, sizeof(czPh), "%t %s", "Cock_sound", bCockSnd[iTmpViol] ? "-" : "+")
+            hMenu2.AddItem("item4",czPh);
+
+			Format(czPh, sizeof(czPh), "%t %s", "Disable_dmg", bDisDmg[iTmpViol] ? "-" : "+")
+            hMenu2.AddItem("item5",czPh);
+
+			Format(czPh, sizeof(czPh), "%t %s", "Mutual_dmg", bMtlDmg[iTmpViol] ? "-" : "+")
+            hMenu2.AddItem("item6",czPh);
+
+			Format(czPh, sizeof(czPh), "%t %s", "Ban_timer", bBanTimer[iTmpViol] ? "-" : "+")
+            hMenu2.AddItem("item7",czPh);
+
             hMenu2.Display(iClient, 0);
             hMenu2.ExitBackButton = true;
             hMenu2.ExitButton = true;
@@ -147,36 +177,65 @@ public int MenuCallBack2(Menu hMenu, MenuAction action, int iClient, int iItem)
         }
         case MenuAction_Select:
         {
-            hMenu.GetItem(iItem, buffer, sizeof(buffer))
+			char lnPhr[256];
+            hMenu.GetItem(iItem, buffer, sizeof(buffer));
             switch(iItem)
             {
                 case 0:
                 {
+					Format(lnPhr, sizeof(lnPhr), "%t", "fc_WD");
                     WeaponDickAction(target);
+					if(GetEngineVersion()==Engine_CSGO) CGOPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bWeapDick[target] ? "Off":"On", target, lnPhr);
+					else if(GetEngineVersion()==Engine_CSS) CPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bWeapDick[target] ? "Off":"On", target, lnPhr);
+					else PrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bWeapDick[target] ? "Off":"On", target, lnPhr);
                 }
                 case 1:
                 {
+					Format(lnPhr, sizeof(lnPhr), "%t", "fc_DM");
                     DickModel(target);
+					if(GetEngineVersion()==Engine_CSGO) CGOPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bDickMdl[target] ? "Off":"On", target, lnPhr);
+					else if(GetEngineVersion()==Engine_CSS) CPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bDickMdl[target] ? "Off":"On", target, lnPhr);
+					else PrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bDickMdl[target] ? "Off":"On", target, lnPhr);
                 }
                 case 2:
                 {
+					Format(lnPhr, sizeof(lnPhr), "%t", "fc_CC");
                     CockChat(target);
+					if(GetEngineVersion()==Engine_CSGO) CGOPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bCockCh[target] ? "Off":"On", target, lnPhr);
+					else if(GetEngineVersion()==Engine_CSS) CPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bCockCh[target] ? "Off":"On", target, lnPhr);
+					else PrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bCockCh[target] ? "Off":"On", target, lnPhr);
                 }
                 case 3:
                 {
+					Format(lnPhr, sizeof(lnPhr), "%t", "fc_CS");
                     CockSound(target);
+					if(GetEngineVersion()==Engine_CSGO) CGOPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bCockSnd[target] ? "Off":"On", target, lnPhr);
+					else if(GetEngineVersion()==Engine_CSS) CPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bCockSnd[target] ? "Off":"On", target, lnPhr);
+					else PrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bCockSnd[target] ? "Off":"On", target, lnPhr);
                 }
                 case 4:
                 {
+					Format(lnPhr, sizeof(lnPhr), "%t", "fc_DD");
                     DisableDamage(target);
+					if(GetEngineVersion()==Engine_CSGO) CGOPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bDisDmg[target] ? "Off":"On", target, lnPhr);
+					else if(GetEngineVersion()==Engine_CSS) CPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bDisDmg[target] ? "Off":"On", target, lnPhr);
+					else PrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bDisDmg[target] ? "Off":"On", target, lnPhr);
                 }
                 case 5:
                 {
+					Format(lnPhr, sizeof(lnPhr), "%t", "fc_MD");
                     MutualDamage(target);
+					if(GetEngineVersion()==Engine_CSGO) CGOPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bMtlDmg[target] ? "Off":"On", target, lnPhr);
+					else if(GetEngineVersion()==Engine_CSS) CPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bMtlDmg[target] ? "Off":"On", target, lnPhr);
+					else PrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bMtlDmg[target] ? "Off":"On", target, lnPhr);
                 }
                 case 6:
                 {
+					Format(lnPhr, sizeof(lnPhr), "%t", "fc_BT");
                     BanTimer(target);
+					if(GetEngineVersion()==Engine_CSGO) CGOPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bBanTimer[target] ? "Off":"On", target, lnPhr);
+					else if(GetEngineVersion()==Engine_CSS) CPrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bBanTimer[target] ? "Off":"On", target, lnPhr);
+					else PrintToChat(iClient, "%t %t %s", "SetFuncToPlayer", bBanTimer[target] ? "Off":"On", target, lnPhr);
                 }
             }
         }
@@ -197,65 +256,11 @@ public Action SayCB(int client, const char[] command, int argc)
 	return Plugin_Continue
 }
 
-bool WeaponDickAction(client)
-{
-	if(!IsFakeClient(client) &&  IsClientInGame(client) && bWeapDick[client] != true)
-	{
-		for (int slot = 0; slot < 6; slot++)
-		{
-			int index;
-			if ((index = GetPlayerWeaponSlot(client, slot)) >= 0)
-			{
-				if (index != -1)
-				{
-					DelWeaponOfIndex(client, index);
-				}
-			}
-		}
-		GivePlayerItem(client,"weapon_knife");
-		bWeapDick[client] = true;
-	}
-}
 
 DelWeaponOfIndex(client, index_weapon)
 {
     RemovePlayerItem(client, index_weapon);
     AcceptEntityInput(index_weapon, "Kill");
-}
-
-bool DickModel(client)
-{
-	GetClientModel(client, czDefaultModelPlayer[client], sizeof(czDefaultModelPlayer));
-	if(!IsFakeClient(client) && IsClientInGame(client))
-	{
-		if(!bDickMdl[client])
-		{
-			SetEntityModel(client,"models/player/custom_player/kaesar/chickenleet/chickenleet.mdl");
-			bDickMdl[client] = true;
-		}
-		else
-		{
-			SetEntityModel(client,czDefaultModelPlayer[client])
-		}
-	}
-}
-
-bool CockChat(client)
-{
-	if(bCockCh[client])
-	{
-		bCockCh[client] = false;
-	}
-	else bCockCh[client] = true;
-}
-
-bool CockSound(client)
-{
-	if(bCockSnd[client])
-	{
-		bCockSnd[client] = false;
-	}
-	else bCockSnd[client] = true;
 }
 
 public void OnPlayerRunCmdPost(int client, int buttons, int impulse, const float vel[3], const float angles[3], int weapon, int subtype, int cmdnum, int tickcount, int seed, const int mouse[2])
@@ -275,45 +280,9 @@ public void OnPlayerRunCmdPost(int client, int buttons, int impulse, const float
 	}
 }
 
-bool DisableDamage(client)
-{
-	if(bDisDmg[client])
-	{
-		bDisDmg[client] = false;
-	}
-	else 
-	{
-		bDisDmg[client] = true;
-	}
-}
-
 public Action OnTakeDamage(int client, int &attacker, int &inflictor, float &damage, int &damagetype, int &weapon, float damageForce[3], float damagePosition[3], int damagecustom)
 {
 	return Plugin_Stop;
-}
-
-bool MutualDamage(client)
-{
-	if(bMtlDmg[client])
-	{
-		bMtlDmg[client] = false;
-	}
-	else bMtlDmg[client] = true;
-}
-
-bool BanTimer(client)
-{
-	if(bBanTimer[client])
-	{
-		bBanTimer[client] = false;
-		KillTimer(ghTimer[client]);
-		ghTimer[client] = null;
-	}
-	else 
-	{	
-		bBanTimer[client] = true;
-		ghTimer[client] = CreateTimer(fBeforeBan, BanTimerCallBack, client);
-	}
 }
 
 public Action BanTimerCallBack(Handle hTimer, client)
@@ -325,7 +294,8 @@ public Action BanTimerCallBack(Handle hTimer, client)
 		FormatEx(buffer, sizeof(buffer), "sm_ban %s %i %s",auth, iBanTime, BanReason)
 		ServerCommand(buffer);
 		KillTimer(ghTimer[client]);
-		ghTimer[client] = null;
+		ghTimer[client] = INVALID_HANDLE;
+		bBanTimer[client]=false;
 	}
 }
 
@@ -354,4 +324,95 @@ public Action Event_WeaponFire(Event hEvent, const char[] sEvent, bool bDontBroa
 		else ForcePlayerSuicide(client);
 	}
 	return Plugin_Continue;
+}
+
+bool WeaponDickAction(client)
+{
+	if(!IsFakeClient(client) &&  IsClientInGame(client) && bWeapDick[client] != true)
+	{
+		for (int slot = 0; slot < 6; slot++)
+		{
+			int index;
+			if ((index = GetPlayerWeaponSlot(client, slot)) >= 0)
+			{
+				if (index != -1)
+				{
+					DelWeaponOfIndex(client, index);
+				}
+			}
+		}
+		GivePlayerItem(client,"weapon_knife");
+		bWeapDick[client] = true;
+	}
+}
+
+void MutualDamage(client)
+{
+	if(bMtlDmg[client])
+	{
+		bMtlDmg[client] = false;
+	}
+	else bMtlDmg[client] = true;
+}
+
+void BanTimer(client)
+{
+	if(bBanTimer[client])
+	{
+		bBanTimer[client] = false;
+		KillTimer(ghTimer[client]);
+		ghTimer[client] = null;
+	}
+	else 
+	{	
+		bBanTimer[client] = true;
+		ghTimer[client] = CreateTimer(fBeforeBan, BanTimerCallBack, client);
+	}
+}
+
+void DisableDamage(client)
+{
+	if(bDisDmg[client])
+	{
+		bDisDmg[client] = false;
+	}
+	else 
+	{
+		bDisDmg[client] = true;
+	}
+}
+
+void CockChat(client)
+{
+	if(bCockCh[client])
+	{
+		bCockCh[client] = false;
+	}
+	else bCockCh[client] = true;
+}
+
+void CockSound(client)
+{
+	if(bCockSnd[client])
+	{
+		bCockSnd[client] = false;
+	}
+	else bCockSnd[client] = true;
+}
+
+void DickModel(client)
+{
+	GetClientModel(client, czDefaultModelPlayer[client], sizeof(czDefaultModelPlayer));
+	if(!IsFakeClient(client) && IsClientInGame(client))
+	{
+		if(!bDickMdl[client])
+		{
+			SetEntityModel(client,"models/player/custom_player/kaesar/chickenleet/chickenleet.mdl");
+			bDickMdl[client] = true;
+		}
+		else
+		{
+			SetEntityModel(client,czDefaultModelPlayer[client])
+		}
+	}
 }
